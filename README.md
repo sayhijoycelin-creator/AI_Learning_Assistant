@@ -11,7 +11,7 @@ A lightweight, local-friendly module for building a personal learning assistant 
 
 ## Features
 
-- **Interactive intake**: Ask a short set of questions to capture name, learning goal, topics, level, provider preferences, time budget, and desired timeline.
+- **Interactive intake**: Ask a short set of questions to capture name, learning goal(s), topics, level, provider preferences, time budget, and desired timeline.
 - **Profile-driven recommendations**: Use the intake answers to get level-appropriate course suggestions from dynamic search results (or, optionally, a tiny offline sample catalog).
 - **Structured plans**: Turn recommended courses into an ordered learning plan with actionable steps.
 - **Weekly breakdowns**: Convert the learning plan into week-by-week steps using your time budget and desired duration.
@@ -28,8 +28,10 @@ from assistant import (
     build_motivation_message,
     build_weekly_plan,
     build_profile_from_answers,
+    build_profile_from_payload,
     build_search_query,
     filter_searched_courses,
+    LearningProfilePayload,
     intake_questions,
     recommend_courses,
 )
@@ -66,6 +68,26 @@ motivation = build_motivation_message(profile, progress_percent=10, last_action=
 logger = ConversationLogger("logs/conversation.jsonl")
 logger.append(ConversationMessage(role="user", content="Help me start learning data science!"))
 logger.append(ConversationMessage(role="assistant", content="Here are some courses to begin..."))
+```
+
+### React intake → backend mapping
+
+If you use the provided `IntakeChat.tsx` snippet (see `examples/IntakeChat.tsx`), send its structured payload straight to the backend and convert it with `build_profile_from_payload`:
+
+```python
+from fastapi import FastAPI
+from assistant import LearningProfilePayload, build_profile_from_payload, recommend_courses
+
+app = FastAPI()
+
+@app.post("/intake")
+def intake(payload: LearningProfilePayload):
+    profile = build_profile_from_payload(payload)
+    courses = recommend_courses(profile, use_builtin_fallback=True)
+    return {
+        "profile": profile,
+        "courses": [c.__dict__ for c in courses],
+    }
 ```
 
 This repository is intentionally minimal so it can be embedded into a broader application (CLI, web, or chat) as you build out your personal learning companion.

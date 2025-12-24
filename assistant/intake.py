@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Dict, Iterable, List, Sequence
 
 from .models import UserProfile
+from .schemas import LearningProfilePayload
 
 
 @dataclass(frozen=True)
@@ -88,4 +89,22 @@ def build_profile_from_answers(name: str, answers: Dict[str, str]) -> UserProfil
         weekly_time_hours=int(weekly_time) if weekly_time.isdigit() else None,
         timeframe_weeks=int(timeframe_weeks) if timeframe_weeks.isdigit() else None,
         phased_focus=phases,
+        special_requirements=[s.strip() for s in answers.get("special_requirements", "").split(",") if s.strip()],
+    )
+
+
+def build_profile_from_payload(payload: LearningProfilePayload) -> UserProfile:
+    """Convert a frontend intake payload into an internal UserProfile."""
+
+    learning_goal = ", ".join(payload.learning_goals) if payload.learning_goals else "Grow data skills"
+    return UserProfile(
+        name=payload.name or "Learner",
+        learning_goal=learning_goal,
+        interested_topics=payload.learning_topics or ["python"],
+        current_level=payload.current_level.overall or "beginner",
+        provider_requirements=payload.preferred_providers or ["DataCamp"],
+        weekly_time_hours=payload.time_commitment.hours_per_week,
+        timeframe_weeks=payload.time_commitment.timeframe_weeks,
+        phased_focus=[],
+        special_requirements=payload.special_requirements or [],
     )

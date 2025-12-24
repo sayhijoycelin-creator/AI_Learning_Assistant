@@ -1,8 +1,36 @@
+# =====================
+# Python
+# =====================
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
 *.pyd
 .Python
+
+# Virtual environments
 .venv/
 .venv_x64/
+venv/
+env/
 python/
+
+# =====================
+# Node / React
+# =====================
+node_modules/
+dist/
+build/
+
+# =====================
+# Environment / secrets
+# =====================
+.env
+.env.local
+.env.*.local
+
+# =====================
+# OS / Editor
+# =====================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

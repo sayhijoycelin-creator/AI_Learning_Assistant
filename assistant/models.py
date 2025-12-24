@@ -17,6 +17,7 @@ class UserProfile:
     weekly_time_hours: Optional[int] = None
     timeframe_weeks: Optional[int] = None
     phased_focus: List[str] = field(default_factory=list)
+    special_requirements: List[str] = field(default_factory=list)
 
 
 @dataclass
