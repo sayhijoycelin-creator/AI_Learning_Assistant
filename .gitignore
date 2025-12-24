@@ -11,6 +11,7 @@ __pycache__/
 .venv_x64/
 venv/
 env/
+python/
 
 # =====================
 # Node / React
